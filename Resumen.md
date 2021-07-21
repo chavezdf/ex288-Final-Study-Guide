@@ -348,11 +348,11 @@ Esta compuesto basicamente de 3 componentes:
 - usage (no requerido): Indica como se usa la imagen
 - test/run (no requrido): Scripts para verificacion de la imagen.
 
-## Custoizar imagen S2I existente
+## Customizar imagen S2I existente
 
-Basicamente debemos agregar nuestros propios scripts dentro de la carpeta **.s2i/bin** Durante el proceso de construccion los nuevos scripts son detectados y son ejecutados en vez de los scripts originales del S2I.
+Basicamente debemos agregar nuestros propios scripts dentro de la carpeta **.s2i/bin** en nuestro codigo fuente. Durante el proceso de construccion los nuevos scripts son detectados y son ejecutados en vez de los scripts originales del S2I.
 
-OJO: El codigo fuente es copiado a **/tmp/src**
+Tip: El codigo fuente es copiado a **/tmp/src**
 
 1. Debemos hacer un pull de la imagen que se desea modificar.
 
@@ -375,9 +375,14 @@ OJO: El codigo fuente es copiado a **/tmp/src**
     > | grep io.openshift.s2i.scripts-url
     "io.openshift.s2i.scripts-url": "image:///usr/libexec/s2i",
 
-3. Modificar el fichero **.s2i/bin/assemble**
-> Esta carpeta generalemente esta ubicada en /usr/libexec/
+3. Se puede hacer un wrapper del assemble original y colocarlo en la carpeta **.s2i/bin/** en nuestro codigo
+> La carpeta en la imagen generalemente esta en: /usr/libexec/
 
+## Crear una Imagen de Construccion
+> OJO: Esta seccion no esta contemplada dentro de los objetivos del examen, por lo tanto no contemplamos el proceso completo de creacion de una image de construccion.
+> OBJECTIVES: Work with the source-to-image (S2I) tool
+> - Deploy applications using S2I
+> - Customize existing S2I builder images
 
 
 
