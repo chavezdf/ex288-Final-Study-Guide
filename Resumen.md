@@ -356,7 +356,7 @@ OJO: El codigo fuente es copiado a **/tmp/src**
 
 1. Debemos hacer un pull de la imagen que se desea modificar.
 
-    sudo podman pull myregistry.example.com/rhscl/php-73-rhel7
+        sudo podman pull myregistry.example.com/rhscl/php-73-rhel7
 
 2. Inspeccionar la imagen y verificar el valor del atributo **io.openshift.s2i.scripts-url**
 
