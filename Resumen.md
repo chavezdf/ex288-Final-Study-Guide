@@ -275,7 +275,7 @@ La mejor manera de compartir un IS entre proyectos es crear un proyecto para que
 
 > Para referenciar la imagen se usa el {proyecto compartido}/{IS}
 
-# Proceso de Construccion (Building Config process)
+# Proceso de Construccion (Build Config process)
 
 ### Building Strategies
 
@@ -352,6 +352,33 @@ Son disparadores de acciones que se definen en openshift al detectarse algun cam
 ### Como elimino el trigger de cambio de imagen en un BC (porque solo debe haber uno solo)
 
     oc set trigger bc/name --from-image project/image:tag --remove 
+
+### Activar un build utilizando un webhook
+
+Cada Build confid tiene un token de acceso para la utilizacion de los webhooks. Para hacer uso de dichos webhooks debemos ubicar 2 componentes:
+
+- **El token:** Para acceder al token lo podemos hacer de 2 maneras:
+
+    a. Realizando un edit al build config y buscando las claves:
+
+        triggers:
+          - github:
+              secret: sdfasdfwo08s90a234
+            type: GitHub
+          - generic
+              secret: 2134230914l2k34093
+            type: Generic
+
+    b. Utilizando el siguiente comando:
+
+        oc get bc simple -o jsonpath="{.spec.triggers[*].generic.secret}{'\n'}"
+    > Este comando hace exactamente lo mismo que el anterior, simplemente hace una busqueda dentro del json.
+
+- **La URL del Web hook**
+
+Extrañamente la URL no aparece durante la edicion (oc edit bc name) del recursos sino en la descripcion (oc describe bc name)
+
+    oc describe bc name |grep -i Webhook -A1
 
 # Post-Commit Build Hooks
 
