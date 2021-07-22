@@ -544,3 +544,29 @@ Openshift proporciona 2 formas de verificar el buen funcionamiento de las aplica
      --get-url=http://:8080/healthz --initial-delay-seconds=15 \
      --succuess-threshold=1 --failure-threshold=3
      
+# Deplolyment Strategies
+
+Se utilizan para definir el metodo que se va a utilizar para actualizar o combiar una aplicacion. El objetivo de estas estrategias es realizar los cambios en el menor tiempo, reduciendo el impacto.
+
+Los metodos son:
+
+**Rolling:** *Es la por defecto*. Reemplaza las instancias una a una progresivamente.
+**Recreate:** Openshift detiene todos los pods, para luego desplegar la nueva version. Se recomienda, cuando correr la nueva version y la vieja no es compatible.
+**Custom:** Cuando ninguno de los 2 metodos anterior cumplen el objetivo y necesitas personalizar ciertos comandos.
+
+## Life-cycle Hooks
+
+Son hooks que se ejecutan durante el deployment. Estos son:
+
+**Pre-Lifecycle Hook:** Se ejecuta antes de que termine alguno de los viejos PODs y antes de comenzar cualquiera de los nuevos PODs
+
+**Mid-Lifecycle Hook:** Se ejecuta despues de apagar cualquiera de los PODs viejos pero antes de comenzar cualquiera de los nuevos PODs
+
+**Post-Lifecycle Hook:** Se ejecuta despues de comenzar el nuevo POD pero luego de haber apagado TODOS los viejos PODs
+
+Cada uno tiene policitas de fallo (failurePolicy):
+
+• Abort: The deployment process is considered a failure if the hook fails.
+• Retry: Retry the hook execution until it succeeds.
+• Ignore: Ignore any hook failure and allow the deployment to proceed.
+
