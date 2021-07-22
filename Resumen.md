@@ -551,7 +551,9 @@ Se utilizan para definir el metodo que se va a utilizar para actualizar o combia
 Los metodos son:
 
 **Rolling:** *Es la por defecto*. Reemplaza las instancias una a una progresivamente.
+
 **Recreate:** Openshift detiene todos los pods, para luego desplegar la nueva version. Se recomienda, cuando correr la nueva version y la vieja no es compatible.
+
 **Custom:** Cuando ninguno de los 2 metodos anterior cumplen el objetivo y necesitas personalizar ciertos comandos.
 
 ## Life-cycle Hooks
