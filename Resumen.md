@@ -385,6 +385,162 @@ Tip: El codigo fuente es copiado a **/tmp/src**
 > - Customize existing S2I builder images
 
 
+# Templates
 
+Los templates estan basados en la definicion de RECURSOS compilados como OBJETOS, los cuales son personalizados a traves de la definicion de PARAMETROS.
 
+## Parametros 
 
+Los parametros son llamados en los recursos utilizando ${PARAMETRO} y son definidos en el bloque parameters dento del template. Estos pueden ser definidos como obligatorios y requeridos y tambien puede proveer valores por defecto.
+
+    parameters:
+    - description: Myapp configuration data         
+    name: MYPARAMETER                               <-- nobmre de parametro
+    value: /etc/myapp/config.ini                    <-- parametro por defecto
+
+    parameters:
+    - description: ACME cloud provider API key
+    name: APIKEY
+    generate: expression                            <-- de tipo expresion generada automaticamente
+    from:"[a-zA-Z0-9]{12}"                          <-- coo se va generar
+    
+### Agregar templates en openshift
+
+    oc create -f template.yaml -n proyecto 
+    
+### Visualizando un template   
+
+**Listar:**
+
+    oc get templates -n openshift
+    
+**Listar parametros:**
+    
+    oc process --parameters -n openshift nodejs-mongodb-example
+
+**Descargar template a fichero:**
+
+    oc get template nodejs-mongodb-example -o yaml -n openshift
+
+## Creando Templates
+
+### Ideas para iniciar:
+
+Podemos utilizar **oc explain** y **oc api-resources** para ver los atributos de cada tipo de recurso que se desea personalizar.
+
+### Procedimiento general
+
+1. Crear un esqueleto de un template con los atributos como NAME, TAGS, y METADATOS Necesarios
+2. Utilizar el comando oc get -o --export {recursos} para exportar a fichero
+
+        oc get -o yaml --export is,bc,dc,svc,route > mytemplate.yaml
+
+3. Limpiar los atributos de tiempo de ejecucion
+
+        Atributos o secciones como: status, creationTimeStamp, image, uid, etc
+
+4. Cortar y pegar los recursos al eseuleto del template previamente creado.
+
+### Problemas a considerar
+
+- No es posible inicializar loca valores KEY: VALUE dentro del atributo DATA utlizando un PARAMETRO. Este atributo debe ser reemplazado por un atributo stringData, y todos los key value deben estar descodificados.
+
+- Si un Image Stream estan vinculados a un registro externo. Entonces se debera cambiar en la plantilla el IS que apunte al externo porque sino fallara.
+
+### Herramientas para la exploracion de definicion de recursos
+
+    oc explain routes
+
+    oc explain routes.spec
+    
+    oc api-resources
+
+### Crear una applicacion a partir de un template
+
+Visualizar parametros a utliizar:
+
+    oc process -f mytemplate.yaml --parameters
+
+    oc process --parameters mytemplate -n proyecto
+
+Forma rapida:
+
+    oc new-app --file mytemplate.yaml -p PARAM1=value1 -p PARAM2=value2
+
+Exportando el template con parametros definidos:
+
+    oc process -f mytemplate.yaml -p PARAM1=value1 -p PARAM2=value2 > myresourcelist.yaml
+
+    oc create -f myresourcelist.yaml
+    
+Proceso 2 en 1:
+
+    oc process -f mytemplate.yaml -p PARAM1=value1 -p PARAM2=value2 | oc create -f -
+    
+# Monitoreo de Aplicaciones
+
+Openshift proporciona 2 formas de verificar el buen funcionamiento de las aplicaciones:
+
+**Readiness Probe**: Verifica si la app ya esta lista para responder a peticiones 
+
+**Liveness Probe**: Verifica si app esta viva. Esta se ejecuta primero de el Readiness.
+
+### Parametros que usan
+
+- **initialDelaySeconds:** Tiempo de espera para que la app inicie y comenzar el probe.
+- **timeoutSeconds:** Tiempo maximo a esperar para la respuesta del probe.
+- **periodSeconds:** Cada cuando se ejecuta el probe
+- **successThreshold:** Cantidad de intentos exitosos del probe luego de un fallido, para considerar que la app vuelve a estar bien. 
+- **failureThreshold:** Cantidad minima de intentos fallidos del probe para considerar que la app fallo.
+
+### Metodos que se pueden usar para la verificacion de la salud de la aplicacion
+
+**HTTP Checks:** Usa los **HTTP STATUS CODES**, ideal para las APIs
+
+**Ej: Definicion de Recursos:**
+
+    readinessProbe:
+      httpGet:
+        path: /health
+        port: 8080
+    initialDelaySeconds: 15
+    timeoutSeconds: 1
+
+**Ej: Commando:**
+
+    oc set probe dc/myapp --readiness -get-url=http://:8080/healthz --period=20
+
+**Container Execution Checks:** Usa el **EXIT CODE** del proceso o el script utilizado para inicial la app dentro del contenedor
+
+**Ej: Definicion de Recursos:**
+
+    livenessProbe:
+      exec:
+        command:
+          - cat
+          - /tmp/health
+    initialDelaySeconds: 15
+    timeoutSeconds: 1
+
+**Ej: Commando:**
+
+    oc set probe dc/myapp --liveness --open-tcp=3306 --period=20 --timeout-seconds=1
+
+**TCP Socket Checks:** Usa los **PUERTOS TCP** para verificar si la app o demonio esta en ejecucion. Tradicionalmente es usado para demonios de bases de datos, file servers, webserver y application servers.
+
+**Ej: Definicion de Recursos:**
+
+    livenessProbe:
+    tcpSocket:
+      port: 8080
+    initialDelaySeconds: 15
+    timeoutSeconds: 1
+    succuessThreshold: 1
+    failureThreshold: 3
+
+**Ej: Commando:**
+
+    oc set probe dc/myapp --liveness \
+     --get-url=http://:8080/healthz --initial-delay-seconds=15 \
+     --succuess-threshold=1 --failure-threshold=3
+     
