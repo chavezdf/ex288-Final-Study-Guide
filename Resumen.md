@@ -12,6 +12,10 @@
 
     git checkout -b nombre-rama
     
+**Eliminar una rama:**
+
+    git branch -d rama
+    
 **Subir repositorio a la nueva rama**
 
     git push -u origin nueva-rama
