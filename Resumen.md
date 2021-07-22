@@ -1,3 +1,21 @@
+# Comandos GIT basicos
+
+**Verificar estatus de un repositorio:**
+
+    git status
+
+**Cambiarse a la rama principal o master:**
+
+    git checkout master
+
+**Crear una rama nueva y cambiarse a ella:**
+
+    git checkout -b nombre-rama
+    
+**Subir repositorio a la nueva rama**
+
+    git push -u origin nueva-rama
+
 
 # Docker files
 
