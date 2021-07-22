@@ -552,9 +552,64 @@ Los metodos son:
 
 **Rolling:** *Es la por defecto*. Reemplaza las instancias una a una progresivamente.
 
+Usar la ultima version del deployment
+
+    oc rollout latest dc/name
+
+Ver el historial de cambios:
+
+    oc rollout history dc/name
+
+Cambiar a una version especifica:
+
+    oc rollout history dc/name --revision=1
+
+Cancelar deployment:
+
+    oc rollout cancel dc/name
+
+Reintentar despliegue:
+
+    oc rollout retry dc/name
+
+Realizar rollback:
+
+    oc rollback dc/name
+> OJO: al realizar rollback openshift quita los triggers, para evitar un redespligue automatico nuevamente. Habria que reactivarlos.
+> oc set triggers dc/name --auto
+
+
 **Recreate:** Openshift detiene todos los pods, para luego desplegar la nueva version. Se recomienda, cuando correr la nueva version y la vieja no es compatible.
 
 **Custom:** Cuando ninguno de los 2 metodos anterior cumplen el objetivo y necesitas personalizar ciertos comandos.
+
+## Deployment Triggers
+
+Los triggers habilitados para los deployments son:
+
+- Cambios en la Configuracion
+
+        triggers:
+        - type: "ConfigChange"
+
+- Cambios en la imagen
+
+        triggers:
+          - type: "ImageChange"
+            imageChangeParams:
+              automatic: true               <-- Si esta en **false**, no se detectan los cambios.
+              containerNames:
+                - "helloworld"
+              from:
+                kind: "ImageStreamTag"
+                name: "origin-ruby-sample:latest"
+
+        oc set triggers dc/name \
+         --from-image=myproject/origin-ruby-sample:latest -c helloworld
+
+## Deployment Resource Limits
+> Verificar documentacion del do285
+
 
 ## Life-cycle Hooks
 
