@@ -5,15 +5,30 @@ Crear un app a partir de un Dockerfile
 
 Docker Instructions
 
-    FROM
+    FROM                                                <-- Imagen padre de partida.
 
-    RUN
+    LABEL key="value" \                                 <-- Para agregar Metadata basado en pares key-value
+          key="value2"
+    
+    MAINTAINER                                          <-- Declarativo, para indicar el mantenedor del fichero.
+    
+    RUN                                                 <-- para ejecutar comandos en una capa adicional.
+     
+    ENV MYSQL_ROOT_PASSWORD="my_password" \             <-- variables de entorno 
+        MYSQL_DATABASE "my_database"
 
-    LABEL
+    EXPOSE                                              <-- es declarativo. Se indica el puerto de escucha
+    
+    ADD <source> <destination>                          <-- Copy ficheros y carpetas de la carpeta de trabajo e inclusive desde una URL. Tiene la habilidad de desempacar los tar.
+    ADD http://someserver.com/filename.pdf /var/www/html
+    
+    COPY <source> <destination>                         <-- Copy ficheros y carpetas de la carpeta de trabajo. No copia ficheros remotos, ni descomprime tars.
 
-    ENV
-
-    USER
+    USER 1001                                           <-- El usuario a utilizar para ejecutar desde ese punto para abajo en el fichero Dockerfile. Se recomienda > 1001
+    
+    ENTRYPOINT ["command", "param1", "param2"]          <-- comando por defecto a ejecutar cuando el contenedor arranca
+            
+    CMD ["param1","param2"]                             <-- provee los parametros por defecto que va usar el ENTRYPOINT
 
     VOLUME
 
