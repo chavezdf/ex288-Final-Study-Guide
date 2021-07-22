@@ -20,6 +20,11 @@
 
     git push -u origin nueva-rama
 
+**Agregar cambios de codigo al repositorio**
+
+    git commit -a -m "Mensaje"
+    
+    git push
 
 # Docker files
 
