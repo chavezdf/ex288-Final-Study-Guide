@@ -304,13 +304,13 @@ Usando los atributos:
 - failedBuildsHistoryLimit
 
 
-    apiVersion: "v1"
-    kind: "BuildConfig"
-    metadata:
-      name: "sample-build"
-    spec:
-      successfulBuildsHistoryLimit: 2
-      failedBuildsHistoryLimit: 2
+        apiVersion: "v1"
+        kind: "BuildConfig"
+        metadata:
+          name: "sample-build"
+        spec:
+          successfulBuildsHistoryLimit: 2
+          failedBuildsHistoryLimit: 2
 
 ### Hacer un purgado automatico
 
