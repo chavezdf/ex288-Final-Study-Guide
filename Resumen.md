@@ -76,7 +76,21 @@ Uso de podman y Skopeo
     skopeo copy
     skopeo delete
     skopeo inspect
-  
+
+## Convertir Dockerfile compatible con Openshift
+
+Basicamente por cuestiones de seguridad openshift solo permite la ejecucion de sus contenedores con usuario no privilegiados y en puertos arriba de 1024. Por lo tanto, la creacion de imagenes con Dockerfile deben cumplir estas premisas. Para ello, hay basicamente 2 cosas que hacer:
+
+1. Cambiar los permisos de todas las carpetas necesarias para el correcto funcionamiento de la aplicacion:
+
+        RUN chgrp -R 0 /path/to/dirs/
+            chmod g=u /path/to/dirs/
+
+
+2. Colocar la ejecucion del comando final con un usuario que tenga id mayor a 1000
+
+        USER 1001
+
 ## Push & Tagging Images
 
 ### Desde el cache local
