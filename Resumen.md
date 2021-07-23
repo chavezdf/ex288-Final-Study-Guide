@@ -91,6 +91,8 @@ Basicamente por cuestiones de seguridad openshift solo permite la ejecucion de s
 
         USER 1001
 
+# Image Streams
+
 ## Push & Tagging Images
 
 ### Desde el cache local
