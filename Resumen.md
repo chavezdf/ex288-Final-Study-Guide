@@ -91,6 +91,63 @@ Basicamente por cuestiones de seguridad openshift solo permite la ejecucion de s
 
         USER 1001
 
+# Inyectar Data de Configuracion en las apps
+
+## Config Maps
+
+**Create Configmaps:
+
+    oc create configmap config_map_name \
+     --from-literal key1=value1 \
+     --from-literal key2=value2
+
+    oc create secret generic secret_name \
+     --from-literal username=user1 \
+     --from-literal password=mypa55w0rd
+
+    oc create configmap config_map_name \
+     --from-file /home/demo/conf.txt
+
+    oc create configmap config_map_name \
+     --from-file key=/home/demo/conf.txt
+
+**Visualizar configmap:**
+
+    oc get configmap/myconf -o json
+
+**Montar todos los keys de un config map en forma de ficheros dentro de un volumen
+
+    oc set volume dc/mydcname --add \
+     -t configmap -m /path/to/mount/volume \
+     --name myvol --configmap-name myconf
+
+## Secrets
+
+**Create Secret
+
+    oc create secret generic secret_name \
+     --from-file /home/demo/mysecret.txt
+
+    oc get secret/mysecret -o json
+
+    oc delete secret/mysecret
+
+**Agregar variables de entorno a partir de un secret
+
+    oc set env dc/mydcname \
+     --from secret/mysecret
+
+**Agregar data desde un secret en un volumen
+
+    oc set volume dc/mydcname --add \
+     -t secret -m /path/to/mount/volume \
+     --name myvol --secret-name mysecret
+
+**Visualizar secret:**
+
+    oc extact secret/secret_name --to -
+
+
 # Image Streams
 
 ## Push & Tagging Images
@@ -691,6 +748,14 @@ Los triggers habilitados para los deployments son:
 
         oc set triggers dc/name \
          --from-image=myproject/origin-ruby-sample:latest -c helloworld
+
+## Deshabilitar la ejecucion de Triggers de Configuracion en un DeploymentConfig
+
+    oc set triggers dc/mydcname --from-config --remove
+
+## Habilitar la ejecucion de triggers de configuracion nuevamente
+
+    oc set triggers dc/mydcname --from-config
 
 ## Deployment Resource Limits
 > Verificar documentacion del do285
