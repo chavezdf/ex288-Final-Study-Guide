@@ -59,7 +59,7 @@ Docker Instructions
 
     VOLUME
 
-    ONBUILD
+    ONBUILD                                             >-- En el caso de aparecer, significa que si es tomada como imagen padre, en la imagen hijo se va a ejecutar los comandos.
 
 Adapting Docker File for Openshift
 
