@@ -490,6 +490,65 @@ Esta compuesto basicamente de 3 componentes:
 - usage (no requerido): Indica como se usa la imagen
 - test/run (no requrido): Scripts para verificacion de la imagen.
 
+## Crear una Imagen de Construccion
+> OJO: Esta seccion no esta contemplada dentro de los objetivos del examen, por lo tanto no contemplamos el proceso completo de creacion de una image de construccion.
+> OBJECTIVES: Work with the source-to-image (S2I) tool
+> - Deploy applications using S2I
+> - Customize existing S2I builder images
+
+Los pasos basicamente son:
+
+1. Declarar una Dockerfile con las herramientas necesarias para el compilado del lenguaje de programacion y la ejecucion de la app, para la cual se desea construir la imagen de construccion.
+
+        FROM    registry.access.redhat.com/ubi8/ubi:8.0                     <-- Imagen de partida
+        LABEL   io.k8s.description="My custom Builder" \                    <-- Importante: Describir la imagen de construccion                   
+                io.k8s.display-name="Nginx 1.6.3" \
+                io.openshift.expose-services="8080:http" \
+                io.openshift.tags="builder,webserver,html,nginx" \
+                io.openshift.s2i.scripts-url="image:///usr/libexec/s2i"     <-- OJO: INDICARLE al S2I de OCP donde va encontrar los scripts obligatorios
+        RUN     yum install -y epel-release && \
+                yum install -y --nodocs nginx && \
+                yum clean all
+        EXPOSE  8080
+        COPY    ./s2i/bin/ /usr/libexec/s2i                                 <-- Copiar los archivos obligatorios, a la ubicacion especificada.
+
+2. Definir el fichero assemble. Debe tener por lo minimo:
+
+        #!/bin/bash -e
+        if [ "$(ls -A /tmp/src)" ]; then
+            mv /tmp/src/* /usr/share/nginx/html/
+        fi
+
+> Siempre se copia el fuente desde el /tmp/src al destino
+
+3. Definir el run
+
+        #!/bin/bash -e
+        /usr/sbin/nginx -g "daemon off;"        <-- Comando de ejecucion. Debende de la aplicacion desde donde se va correo el fuente.
+
+### Commandos para construirla a partir de los ficheros creados:
+
+Estructura Imagen de Construccion:
+
+    .
+    +-- Dockerfile
+    +-- s2i/   
+    |   +-- assemble
+    |   +--run
+    |   +--usage   
+
+
+Posicionados en la carpeta raiz donde esta el Dockerfile ejecutar:
+
+    sudo podman build -t nombreImagen .
+
+Verificar la imagen creada
+
+    sudo podman images
+    
+    
+
+
 ## Customizar imagen S2I existente
 
 Basicamente debemos agregar nuestros propios scripts dentro de la carpeta **.s2i/bin** en nuestro codigo fuente. Durante el proceso de construccion los nuevos scripts son detectados y son ejecutados en vez de los scripts originales del S2I.
@@ -519,13 +578,6 @@ Tip: El codigo fuente es copiado a **/tmp/src**
 
 3. Se puede hacer un wrapper del assemble original y colocarlo en la carpeta **.s2i/bin/** en nuestro codigo fuente.
 > La carpeta en la imagen generalemente esta en: /usr/libexec/
-
-## Crear una Imagen de Construccion
-> OJO: Esta seccion no esta contemplada dentro de los objetivos del examen, por lo tanto no contemplamos el proceso completo de creacion de una image de construccion.
-> OBJECTIVES: Work with the source-to-image (S2I) tool
-> - Deploy applications using S2I
-> - Customize existing S2I builder images
-
 
 # Templates
 
