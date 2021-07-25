@@ -517,7 +517,7 @@ Tip: El codigo fuente es copiado a **/tmp/src**
     > | grep io.openshift.s2i.scripts-url
     "io.openshift.s2i.scripts-url": "image:///usr/libexec/s2i",
 
-3. Se puede hacer un wrapper del assemble original y colocarlo en la carpeta **.s2i/bin/** en nuestro codigo
+3. Se puede hacer un wrapper del assemble original y colocarlo en la carpeta **.s2i/bin/** en nuestro codigo fuente.
 > La carpeta en la imagen generalemente esta en: /usr/libexec/
 
 ## Crear una Imagen de Construccion
