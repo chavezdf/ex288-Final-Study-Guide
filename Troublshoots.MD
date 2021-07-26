@@ -181,4 +181,24 @@ Lab 10: Reviews
 			Por lo tanto, no se agrega la variable solo colocando el ${VARIABLE}
 			- El template del nodejs-mongodb-example tiene un ejemplo de probes
 		
+## DOCUMENTACION:
 
+   1. Dockerfile, permisos:
+       - Doc Images, 4.1.2:
+	https://access.redhat.com/documentation/en-us/openshift_container_platform/4.5/html-single/images/index#images-create-guide-openshift_create-images
+ 
+   2. Registry:
+       - Doc. Registry, 2.4 - Enable Default Route:     
+	https://access.redhat.com/documentation/en-us/openshift_container_platform/4.5/html-single/registry/index#registry-operator-default-crd_configuring-registry-operator
+
+   3. S2I: 
+      - Doc. Images, 4.3: 
+      	https://access.redhat.com/documentation/en-us/openshift_container_platform/4.5/html-single/images/index#images-create-s2i_create-images
+
+   4. WebHook Triggers:
+      - Doc. Builds, 8.1.1:
+	https://access.redhat.com/documentation/en-us/openshift_container_platform/4.5/html-single/builds/index#builds-webhook-triggers_triggering-builds-build-hooks
+
+   5. Templates:
+      - Doc Images, 10.7.8
+	https://access.redhat.com/documentation/en-us/openshift_container_platform/4.5/html-single/images/index#templates-create-from-existing-object_using-templates
