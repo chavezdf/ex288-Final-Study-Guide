@@ -1,18 +1,115 @@
 
+## Capitulo 2 
+	Guiado 1:
+		Objetivo:
+			- Usar una imagen Padre (Con declaraciones ONBUILD) para construir una imagen Hija.
+		Troubleshoot:
+			- Hay que inspeccionar la imagen padre, y tener claro que le esta permitiendo hacer al hijo.
+			- Si el comando ONBUILD especifica una copiando de una carpeta, entonces hay que asegurarse que la carpeta donde se este ejecutando el Dockerfile
+			del hijo contenga la carpeta o los ficheros que se van a copiar.
+	Guiado 2:
+		Objetivo:
+			- Inyectar data de configuracion a un contenedor
+			- Cambiar data de configuracion
+	LAB Capitulo 2:
+		Objetivo:
+			- Arreglar una Dockerfile para que pueda ejecutarse con un usuario aleatorio, y pueda ejecutarse correctamente en un entorno de OCP.
+			- Usar Config Maps y Secret para agregar data de configuracion
+		Troubleshoot:
+			- OJO: Hay que estar pendiente de la URL completa, donde se supone que va responder algo. No es solo el route solo. aveces le agregan endpoints.
 
+## Capitulo 3 
+	Guiado 1:
+		Objetivo:
+			- Subir imagen a un registro externo, autenticando contra el registro.
+			- Desplegar una aplicacion en OCP usando una imagen externa que requiera autenticacion con entrada.
+		Troubleshoot:
+			- probar imagen externa: podman run -d --name test <path-to-image> -p <port>:<port>		
+			- crear secret con creadenciales
+			- crear link a la SA builder o default: oc secret link <serviceAccount> <secret-name>
+
+	Guiado 2:
+		Objetivo:
+			- Subir imagen a in registro interno usando las herramientas de contenedores (Exponer el Registro Interno)
+			- Crear un contenedor usando el registro interno
+		Troubleshoot:
+			- Para logearte al registro interno, puedes usar el metodo expresado en la documentacion (Seccion: Registry Cap. 6)
+			- Tambien se puede usar la opcion --dest-cred de skopeo. Colocando user:token
+			- OJO: la ruta destino del registro interno es: docker://<nom-registro>/<nom-proyecto>/<nom-imagen>:<tag>
+			- Luego de subir la imagen, debemos verificar que se puede baja con podman pull.
+
+		Comandos relevantes:
+			Informacion necesaria:
+				TOKEN=$(oc whoami -t)
+				oc get route -n openshift-image-registry
+				OJO: el nombre por defecto "default-route"-"openshift-image-registry"."wildcard"		
+			Autentication: USER:TOKEN			
+				skopeo copy --dest-creds <usuario>:<token> <imagen-origen> docker://<nobmre-registry>/<nobmre-proyecto>/<nombre-image>:<tag>
+			TEST: 
+				podman login -u <user> -p <token>
+				podman pull <nombre-registro>/<nombre-proyecto>/<nobmre-image>:<tag>
+				podman run  --name <nombre> <nombre-registro>/<nombre-proyecto>/<nobmre-image>:<tag>
+	Guiado 3:
+		Objetivo:
+			- Publicar una image de un registro externo (NO PRIVADO) en un proyecto y hacerla accesible a otros proyectos.
+			- Desplegar una aplicacion usando esta imagen.
+		Troubleshoot:
+			- Creamos un proyecto de uso comun
+			- Importamos la imagen como IS en el proyecto comun. OJO: usar oc import-image <nom-is> --from <image-url> 
+			- Se crea un nuevo proyecto donde se va hacer uso del IS importado previamente.
+			- Se invoca al IS: oc new-app --as-deployment-config --name <nombre> -i <nombre-project>/<nombre-de-IS>
+			OJO: Como la imagen se importo desde un registro publico, los proyectos no va a tener problemas para hacer pull.
+		
+	LAB 3:
+		Objetivo:
+			- Desplegar una aplicacion haciendo uso de una imagen de un registro externo.
+		Troubleshoot:
+			- Se sube una image OCI a un registro PRIVADO externo.
+			- Se crea un proyecto de uso comun
+			- Para importar la imagen al OCP, al ser un registro privado, se deben crear un secret con las credenciales.			
+			- Luego de importar la imagen, se crea un nuevo proyecto para realizar uso de la imagen.
+			- Para ello, se debe agregar el grupo **system:image-puller** al grupo **system:serviceaccounts:<nombre-de-proyecto>** 
+			en el namespace del proyecto de uso comun common, con la finalidad de poder realizar pull.
+			- Finalmente, podemos crear una aplicacion usando la imagen del proyecto de uso comun.
+
+		Comandos Relevantes:
+			oc import-image <nombre-imgage>:<tag> --from <path-to-registry-image> --confirm --reference-policy local
+			oc secret link <service-account> <secret> --for <pull,push,mount>
+			oc policy add-role-to-group system:image-puller system:serviceaccounts:<nobmre-proyecto>
+			oc new-app --name <nombre-app> --as-deployment-config <nombre-proyecto-comun>/<nombre-image-stream>
 
 ## Capitulo 4
+
+	Guiado 1: 
+		Objetivo: 
+			- Manejar builds
+		Troubleshoots:
+			- Problemas con variables de entorno de construccion BUILD_ENV
+		Comandos relevantes:
+			oc start-builde bc/<nombre-build>
+			oc cancel-build bc/<nombre-build>			
+
+	Guiado 2: 
+		Objetivo: 
+			- Desplegar una aplicacion con una imagen de contruccion
+			- Actualizar version de imagen de contruccion y verificar se dispara un trigger por cambio en la imagen.
+		Troubleshoot:
+			- Cuando se esta importando una imagen de un registro privado donde es necesario el acceso con credenciales
+			se debe hacer el link del "secret" con la seviceaccount "builder"
+		Comandos relevantes:
+			oc secret link builder <nombre-secret>
+			oc import-image IS  (Para actualizar el IS ante cambio)
 
 	Guiado 3: 
 		Objetivo: 
 			- Crear un commando Post-Commit
 		TroubleShoot: 
 			- Una de las variables utilizada en el comando post commit no estaba definida como variable de entorno.
-
 		Commando relevante: 
-
 			oc set build-hook bc/name --post-commit --command -- COMANDO
 			oc set build-hook bc/name --post-commit --script="SCRIPT"
+			oc set env bc/name VARIABLE=valor
+			oc set env bc/name --list			
 
 	LAB: Capitulo 4
 
@@ -50,7 +147,6 @@
 
 			oc new-app --name --as-deployment-config istag~https://git-path-to-s2i-proyect --contect-dir directorio-s2i-project
 			oc logs -f bc/nombre
-
 	Guiado 2:
 		Objetivos:
 			- Construir una imagen de construccion usando s2i
