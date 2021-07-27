@@ -211,7 +211,7 @@
 			- Creamos un secret con las credenciales de acceso al registry privado
 			- Linkeamos el secret con las credenciales a la SA builder para que pueda hacer pulls
 			- Importamos el IS de quay.io
-			- Probamos el IS con un codigo fuente
+			- Probamos el IS con un codigo fuente en OCP.
 			- Probamos la aplicacion recien desplegada
 			- Modificamos el script "run" de la imagen de construccion.
 				- Agregamos en el fuente la carpeta .s2i/bin con el fichero run
@@ -302,8 +302,13 @@ Lab 10: Reviews
 	
 	Review 1:
 		Objetivos:
+			- Optimizar Dockerfile
+			- Adaptar Dockerfile para que pueda correr un openshift
+			- Publicar imagen en registro externo
+			- Crear una IS en un proyecto compartido.
 		
 		Troubleshoot:
+			-
 			- La permisologia de system:image-puller se le da al GRUPO system:accountservices:<NOM-PROJECTO>
 			
 	Review 3:
