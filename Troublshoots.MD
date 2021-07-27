@@ -309,7 +309,8 @@ Lab 10: Reviews
 	Review 3:
 		Troubleshoot:
 			- Cuando agregas una variable a un secret hay que tener cuidado porque es un recurso que esta codificado. 
-			Por lo tanto, no se agrega la variable solo colocando el ${VARIABLE}
+			por lo tanto, no se agrega la variable solo colocando el ${VARIABLE}
+				- Se debe anteponer a la definicion "Data" "stringData" y se elimina la info codificada y ahora si se puede agregar la variable.
 			- El template del nodejs-mongodb-example tiene un ejemplo de probes
 		
 ## DOCUMENTACION:
