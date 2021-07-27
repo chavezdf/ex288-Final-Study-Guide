@@ -271,7 +271,32 @@
 		Comandos Relevantes:
 		
 			oc set probe dc/<nobmre-DC> --readiness --get-url=http://:8080/healthz --initial-delay-seconds=2 --timeout-seconds=2
+			
+			readinessProbes:
+			  httpGet:
+			    path: /healthz
+			    port: 8080
+			  initial-delay-seconds: 2
+			  timeout-seconds: 2
+			    
+			
 			oc set probe dc/<nobmre-DC> --liveness  --get-url=http://:8080/ready --initial-delay-seconds=2 --timeout-seconds=2
+
+			livenessProbes:
+			  httpGet:
+			    path: /healthz
+			    port: 8080
+			  initial-delay-seconds: 2
+			  timeout-seconds: 2
+			
+			oc set probe dc/<nombre-DC> --liveness --open-tcp=3306 --period=20 --timeout-seconds=1
+
+			livenessProbes:
+			  tcpSocket:
+			    port: 3306
+			  periodSeconds: 20
+			  timeout-seconds: 1			
+			
 
 Lab 10: Reviews
 	
@@ -308,3 +333,7 @@ Lab 10: Reviews
    5. Templates:
       - Doc Images, 10.7.8
 	https://access.redhat.com/documentation/en-us/openshift_container_platform/4.5/html-single/images/index#templates-create-from-existing-object_using-templates
+
+   6. Health Check
+      -Doc Aplicacion Cap. 6
+      https://access.redhat.com/documentation/en-us/openshift_container_platform/4.5/html/applications/application-health
