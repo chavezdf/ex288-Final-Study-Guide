@@ -132,13 +132,17 @@
 		Objetivo:
 			- Personalizar un "assemble" y correr un script de una imagen de construccion de Apache. 
 			- Sobreescribir el script por defecto de la imagen de construccion.
-		Troubleshoot: 
-			-Inspeccionar la imagen con podman
-			-Se debe crear un branch en el codigo para colocar estos ficheros en .s2i/bin
-			-Se realizan las modificaciones necesarias a estos ficheros
-			-Se crea una nueva app para probar que conje los cambios
-			--Se verifican los logs de BC para visualizar los mensajes dejados por los nuevos scripts
-			--Se verifican que los cambios hayan sido aplicados.
+		A tomar en consideracion:
+			- Las imagenes cuando arrancan se posicionan en el directorio "/opt/app-root/src". Este directorio es donde se instala el fuente.
+			- Por ello los assemble hacen una copia desde /tmp/src/* ./
+			- Cuando se quiere personalizar una imagen de construccion, se debe agregar en el codigo fuente los directorios .s2i/bin
+		Troubleshoot: 		
+			- Inspeccionar la imagen con podman
+			- Se debe crear un branch en el codigo para colocar estos ficheros en .s2i/bin
+			- Se realizan las modificaciones necesarias a estos ficheros
+			- Se crea una nueva app para probar que toma los cambios
+			- Se verifican los logs de BC para visualizar los mensajes dejados por los nuevos scripts
+			- Se verifican que los cambios hayan sido aplicados.
 
 		Commandos relevantes
 
@@ -200,6 +204,7 @@
 		Troubleshoot:
 			- Se nos indica usar la imagen ubi8.0 o redhat8
 			- Se nos da un Docker file ya generado para solo agregar el copiado del directorio s2i fuente
+				COPY ./s2i/bin/ /usr/libexec/s2i
 			- Generamos la imagen de construccion en local con podman.
 			- Probamos codigo fuente usando la imagen generada utilizando la herramienta s2i.
 			- Subimos la imagen de construccion creada y probada a quay.io
