@@ -267,6 +267,11 @@
 			- Se agrega el probe de liveness
 			- Se agrega el probe de readiness
 			- Se monitorean los logs
+		
+		Comandos Relevantes:
+		
+			oc set probe dc/<nobmre-DC> --readiness --get-url=http://:8080/healthz --initial-delay-seconds=2 --timeout-seconds=2
+			oc set probe dc/<nobmre-DC> --liveness  --get-url=http://:8080/ready --initial-delay-seconds=2 --timeout-seconds=2
 
 Lab 10: Reviews
 	
